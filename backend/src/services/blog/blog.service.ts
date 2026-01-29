@@ -1,6 +1,7 @@
 import { BlogInput } from "../../types/blogTypes"
 import Blog, {IBlogModel} from '../../models/blogModel'
 import { Types } from "mongoose"
+import { broadcast } from "../../wsServer"
 
 const PAGE_SIZE = 4
 
@@ -27,6 +28,8 @@ export const createBlog = async (data: BlogInput) => {
         })
 
         await blog.save()
+
+        broadcast({ type: "NEW_BLOG", payload: blog })
 
     }
 

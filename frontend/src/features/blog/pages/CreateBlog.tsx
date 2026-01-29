@@ -4,6 +4,7 @@ import { createBlog } from "../services/blog.service"
 import { useAppSelector } from "../../../app/hooks"
 import { ApiError } from "../../../services/api/apiError"
 import Editor from "../../../components/Editor"
+import { isEmptyContent, normalizeContent } from "../../../utils/content.validation"
 
 const CreateBlog = () => {
 
@@ -25,13 +26,24 @@ const CreateBlog = () => {
             return
         }
 
+        if (isEmptyContent(content)) {
+            toast.error("Blog Content cannot be empty")
+            return
+        }
+
+        const cleanedContent = normalizeContent(content)
+        if(!cleanedContent){
+            toast.error("Blog Content cannot be empty")
+            return
+        }
+
         setLoading(true)
 
         try {
 
             await createBlog({
                 title: title.trim(),
-                content: content.trim()
+                content: cleanedContent
             }, token)
 
             toast.success("Blog published successfully!")

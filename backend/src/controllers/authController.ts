@@ -17,7 +17,6 @@ export const login = async (req: Request, res: Response) => {
     try {
 
         const result = await authService.loginUser(req.body)
-        console.log(result)
         res.status(200).json(result)
 
     } catch (error) {

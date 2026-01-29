@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAppSelector } from "../../../app/hooks"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { ApiError } from "../../../services/api/apiError"
 import { createBlog, deleteBlog } from "../services/blog.service"
 import Swal from 'sweetalert2'
 import Editor from "../../../components/Editor"
+import { isEmptyContent, normalizeContent } from "../../../utils/content.validation"
 
 const SingleBlog = () => {
 
@@ -21,11 +22,26 @@ const SingleBlog = () => {
         return null
     }
 
-    const [content, setContent] = useState(blog.content)
+    const [content, setContent] = useState('')
+
+    useEffect(() => {
+        setContent(blog.content)
+    }, [blog])
 
     const handlePublish = async () => {
-
+    
         if (!content.trim()) {
+            toast.error("Blog Content cannot be empty")
+            return
+        }
+
+        if (isEmptyContent(content)) {
+            toast.error("Blog Content cannot be empty")
+            return
+        }
+
+        const cleanedContent = normalizeContent(content)
+        if(!cleanedContent){
             toast.error("Blog Content cannot be empty")
             return
         }
@@ -37,10 +53,12 @@ const SingleBlog = () => {
             await createBlog({
                 blogId: blog._id,
                 title: blog.title,
-                content: content.trim()
+                content: cleanedContent
             }, token)
 
             toast.success("Blog published successfully!")
+
+            setContent(cleanedContent)
 
         } catch(error: unknown) {
             if (error instanceof ApiError) {

@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { type IBlog } from "../types/blog.types"
 import { getAllBlogs } from "../services/blog.service"
 import Loader from "../../../components/Loader"
 import { FiSearch, FiChevronDown, FiPlus } from "react-icons/fi"
+import { useWebSocket } from "../../../app/useWebSocket"
 
 const Home = () => {
 
-    const [blogs, setBlogs] = useState<IBlog[]>([])
     const [searchTerm, setSearchTerm] = useState("")
+    const [debouncedSearch, setDebouncedSearch] = useState(searchTerm)
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
     const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
-
-    const [debouncedSearch, setDebouncedSearch] = useState(searchTerm)
+    const queryClient = useQueryClient()
 
     useEffect(() => {
 
@@ -27,32 +26,53 @@ const Home = () => {
 
         return () => clearTimeout(timer)
 
-  }, [searchTerm])
+    }, [searchTerm])
     
-    useEffect(() => {
+    const { data, isLoading, isFetching, error } = useQuery<{data: IBlog[], totalPages: number}>({
+        queryKey: ["blogs", currentPage, debouncedSearch, sortOrder],
+        queryFn: () =>
+            getAllBlogs({
+                page: currentPage,
+                searchTerm: debouncedSearch,
+                sortOrder
+            }),
+        staleTime: 5 * 60 * 1000,  
+        placeholderData: (previousData) => previousData
+    })
 
-        const fetchAllBlogs = async () => {
-            try {
-                setLoading(true)
-                const result = await getAllBlogs({
-                    page: currentPage,
-                    searchTerm: debouncedSearch,
-                    sortOrder: sortOrder
-                })
-                setBlogs(result.data)
-                setTotalPages(result.totalPages)
-            } catch (err) {
-                console.error("Error fetching blogs: ", err)
-            } finally{
-                setLoading(false)
+    const blogs = data?.data || []
+    const totalPages = data?.totalPages || 1
+
+    const handleWebSocketMessage = useCallback((msg: any) => {
+
+            if (msg.type === "NEW_BLOG") {
+
+                // Update React Query cache for blogs in real-time
+                queryClient.setQueryData<{ data: IBlog[]; totalPages: number }>(
+                    ["blogs", currentPage, debouncedSearch, sortOrder],
+                        (oldData) => {
+                        if (!oldData) return { data: [msg.payload], totalPages: 1 }
+                        return {
+                            ...oldData,
+                            data: [msg.payload, ...oldData.data],
+                            totalPages: oldData.totalPages + 1,
+                        }
+                    }
+                )
             }
-        }   
+        },
 
-        fetchAllBlogs()
-    }, [currentPage, debouncedSearch, sortOrder])
+        [queryClient, currentPage, debouncedSearch, sortOrder]
+    )
 
-    if(loading){
+    useWebSocket("http://localhost:8080", handleWebSocketMessage)
+
+    if(isLoading){
         return <Loader/>
+    }
+
+    if (error) {
+        return <p className="text-red-500 text-center">Failed to load blogs</p>
     }
 
     return (
@@ -87,12 +107,17 @@ const Home = () => {
     
                 </div>
             </div>
-    
+            
+            {/* Background fetching indicator */}
+            {isFetching && (
+                <p className="text-sm text-gray-400 mb-4">loading...</p>
+            )}
+
             {/* User Blogs */}
             <div className="grid md:grid-cols-2 gap-6">
     
                 {blogs.length > 0 ? (
-                blogs.map((blog) => (
+                blogs.map((blog: IBlog) => (
     
                     <div key={blog._id} onClick={() => navigate(`/blog/${blog._id}`, { state: { blog } })}
                     className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition cursor-pointer">
