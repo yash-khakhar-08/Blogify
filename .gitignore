@@ -84,3 +84,11 @@ temp/
 *.key
 *.crt
 secrets/
+
+# Terraform
+infra/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
