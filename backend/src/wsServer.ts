@@ -35,11 +35,6 @@ export const broadcast = (data: any) => {
         if (client.readyState === client.OPEN) {
             client.send(msg)
         }
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> 6021305 (added web sockets terraform and docker)
     })
 
 }
