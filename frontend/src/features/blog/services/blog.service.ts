@@ -1,13 +1,15 @@
 import { apiClient } from "../../../services/api/apiClient"
 import type { BlogPayload, filterOptions, IBlog } from "../types/blog.types"
 
+const backendApiUrl = import.meta.env.VITE_BACKEND_API_URL
+
 export const createBlog = async (
     payload: BlogPayload,
     token: string | null
 ): Promise<{message: string}> => {
 
     return apiClient<{message: string}>(
-        "http://localhost:8080/api/blog/create",
+        `${backendApiUrl}/api/blog/create`,
         {
             method: "POST",
             body: payload,
@@ -19,7 +21,7 @@ export const createBlog = async (
 export const getAllBlogs = async (filterOptions: filterOptions): Promise<{data: IBlog[], totalPages: number}> => {
 
     return apiClient<{data: IBlog[], totalPages: number}>(
-        `http://localhost:8080/api/blog/getAllBlogs?page=${filterOptions.page}&searchTerm=${filterOptions.searchTerm}&sortOrder=${filterOptions.sortOrder}`,
+        `${backendApiUrl}/api/blog/getAllBlogs?page=${filterOptions.page}&searchTerm=${filterOptions.searchTerm}&sortOrder=${filterOptions.sortOrder}`,
         {
             method: "GET",
         },
@@ -30,7 +32,7 @@ export const getAllBlogs = async (filterOptions: filterOptions): Promise<{data: 
 export const getAllUserBlogs = async (token: string | null): Promise<{data: IBlog[]}> => {
 
     return apiClient<{data: IBlog[]}>(
-        "http://localhost:8080/api/blog/getAllUserBlogs",
+        `${backendApiUrl}/api/blog/getAllUserBlogs`,
         {
             method: "GET",
         },
@@ -44,7 +46,7 @@ export const deleteBlog = async (
 ): Promise<{message: string}> => {
 
     return apiClient<{message: string}>(
-        `http://localhost:8080/api/blog/delete?blogId=${blogId}`,
+        `${backendApiUrl}/api/blog/delete?blogId=${blogId}`,
         {
             method: "DELETE",
         },
@@ -57,7 +59,7 @@ export const uploadImage = async (
     token: string | null
 ): Promise<{url: string}> => {
 
-    const response = await fetch('http://localhost:8080/api/blog/upload-image',{
+    const response = await fetch(`${backendApiUrl}/api/blog/upload-image`,{
         method: 'POST',
         headers: {
             "Authorization": `Bearer ${token}`
