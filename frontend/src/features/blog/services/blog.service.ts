@@ -1,15 +1,13 @@
 import { apiClient } from "../../../services/api/apiClient"
 import type { BlogPayload, filterOptions, IBlog } from "../types/blog.types"
 
-const backendApiUrl = import.meta.env.VITE_BACKEND_API_URL
-
 export const createBlog = async (
     payload: BlogPayload,
     token: string | null
 ): Promise<{message: string}> => {
 
     return apiClient<{message: string}>(
-        `${backendApiUrl}/api/blog/create`,
+        `/api/blog/create`,
         {
             method: "POST",
             body: payload,
@@ -21,7 +19,7 @@ export const createBlog = async (
 export const getAllBlogs = async (filterOptions: filterOptions): Promise<{data: IBlog[], totalPages: number}> => {
 
     return apiClient<{data: IBlog[], totalPages: number}>(
-        `${backendApiUrl}/api/blog/getAllBlogs?page=${filterOptions.page}&searchTerm=${filterOptions.searchTerm}&sortOrder=${filterOptions.sortOrder}`,
+        `/api/blog/getAllBlogs?page=${filterOptions.page}&searchTerm=${filterOptions.searchTerm}&sortOrder=${filterOptions.sortOrder}`,
         {
             method: "GET",
         },
@@ -32,7 +30,7 @@ export const getAllBlogs = async (filterOptions: filterOptions): Promise<{data: 
 export const getAllUserBlogs = async (token: string | null): Promise<{data: IBlog[]}> => {
 
     return apiClient<{data: IBlog[]}>(
-        `${backendApiUrl}/api/blog/getAllUserBlogs`,
+        `/api/blog/getAllUserBlogs`,
         {
             method: "GET",
         },
@@ -46,7 +44,7 @@ export const deleteBlog = async (
 ): Promise<{message: string}> => {
 
     return apiClient<{message: string}>(
-        `${backendApiUrl}/api/blog/delete?blogId=${blogId}`,
+        `/api/blog/delete?blogId=${blogId}`,
         {
             method: "DELETE",
         },
@@ -59,7 +57,7 @@ export const uploadImage = async (
     token: string | null
 ): Promise<{url: string}> => {
 
-    const response = await fetch(`${backendApiUrl}/api/blog/upload-image`,{
+    const response = await fetch(`/api/blog/upload-image`,{
         method: 'POST',
         headers: {
             "Authorization": `Bearer ${token}`
