@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ..
+    image: blogify-backend
+    container_name: blogify-backend
+    expose:
+      - "8080"
+
+  nginx:
+    build:
+      context: ..
+    image: blogify-frontend
+    container_name: blogify-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
