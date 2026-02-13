@@ -1,20 +1,19 @@
-# 1. Use Node base image
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ .
+RUN npm run build
+
+
 FROM node:24-alpine
 
-# 2. Set working directory inside container
 WORKDIR /app
+RUN npm install -g serve
 
-# 3. Copy only package files first (for better caching)
-COPY frontend/package*.json ./
+COPY --from=builder /app/dist ./dist
 
-# 4. Install dependencies
-RUN npm install
+EXPOSE 3000
 
-# 5. Copy frontend source code
-COPY frontend/ .
-
-# 6. Expose frontend port (example: 5173)
-EXPOSE 5173
-
-# 7. Start frontend
-CMD ["npm", "run", "dev","--","--host"]
+CMD ["serve", "-s", "dist", "-l", "3000"]
