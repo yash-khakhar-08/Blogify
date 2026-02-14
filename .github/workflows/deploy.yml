@@ -73,6 +73,14 @@ jobs:
           docker compose down
 
           echo "▶️ Starting containers"
+
+          export PORT=${{ secrets.PORT }}
+          export MONGO_URI=${{ secrets.MONGO_URI }}
+          export JWT_SECRET=${{ secrets.JWT_SECRET }}
+          export CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          export CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+          export CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+
           docker compose up -d
 
           echo "✅ Deployment finished"
