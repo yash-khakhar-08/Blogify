@@ -1,6 +1,6 @@
 services:
   backend:
-    image: yashkhakhkhar455/blogify-backend:v2
+    image: yashkhakhkhar455/blogify-backend:v1
     container_name: blogify-backend
     expose:
       - "8080"
@@ -14,7 +14,7 @@ services:
     restart: always
 
   nginx:
-    image: yashkhakhkhar455/blogify-frontend:v2
+    image: yashkhakhkhar455/blogify-frontend:v1
     container_name: blogify-frontend
     ports:
       - "80:80"

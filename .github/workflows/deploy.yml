@@ -26,11 +26,11 @@ jobs:
       run: |
         docker build --no-cache \
         -f docker/backend.DockerFile \
-        -t yashkhakhkhar455/blogify-backend:v2 \
+        -t yashkhakhkhar455/blogify-backend:v1 \
         .
 
     - name: Push backend image
-      run: docker push yashkhakhkhar455/blogify-backend:v2
+      run: docker push yashkhakhkhar455/blogify-backend:v1
 
 
     # ==============================
@@ -40,11 +40,11 @@ jobs:
       run: |
         docker build --no-cache \
         -f docker/frontend.DockerFile \
-        -t yashkhakhkhar455/blogify-frontend:v2 \
+        -t yashkhakhkhar455/blogify-frontend:v1 \
         .
 
     - name: Push frontend image
-      run: docker push yashkhakhkhar455/blogify-frontend:v2
+      run: docker push yashkhakhkhar455/blogify-frontend:v1
 
 
     # ==============================
@@ -66,21 +66,20 @@ jobs:
           cd $APP_DIR
 
           echo "📥 Pulling latest images"
-          docker pull yashkhakhkhar455/blogify-backend:v2
-          docker pull yashkhakhkhar455/blogify-frontend:v2
+          docker pull yashkhakhkhar455/blogify-backend:v1
+          docker pull yashkhakhkhar455/blogify-frontend:v1
 
           echo "🛑 Stopping old containers"
           docker compose down
 
           echo "▶️ Starting containers"
 
-          export PORT=${{ secrets.PORT }}
-          export MONGO_URI=${{ secrets.MONGO_URI }}
-          export JWT_SECRET=${{ secrets.JWT_SECRET }}
-          export CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          export CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-          export CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-
+          PORT=${{ secrets.PORT }} \
+          MONGO_URI=${{ secrets.MONGO_URI }} \
+          JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} \
+          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
+          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
           docker compose up -d
 
           echo "✅ Deployment finished"
