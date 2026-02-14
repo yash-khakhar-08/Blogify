@@ -61,7 +61,7 @@ jobs:
           echo "🚀 Deployment started"
 
           # CHANGE THIS if your repo is elsewhere on EC2
-          APP_DIR="/home/ec2-user/projects/Blogify"
+          APP_DIR="/home/ec2-user/projects/Blogify/docker"
 
           cd $APP_DIR
 
@@ -70,9 +70,9 @@ jobs:
           docker pull yashkhakhkhar455/blogify-frontend:latest
 
           echo "🛑 Stopping old containers"
-          docker compose -f docker/docker-compose.yml down
+          docker compose down
 
           echo "▶️ Starting containers"
-          docker compose -f docker/docker-compose.yml up -d
+          docker compose up -d
 
           echo "✅ Deployment finished"
