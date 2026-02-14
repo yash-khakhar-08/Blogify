@@ -24,7 +24,7 @@ jobs:
     # ==============================
     - name: Build backend image
       run: |
-        docker build \
+        docker build --no-cache \
         -f docker/backend.DockerFile \
         -t yashkhakhkhar455/blogify-backend:latest \
         .
@@ -38,7 +38,7 @@ jobs:
     # ==============================
     - name: Build frontend image
       run: |
-        docker build \
+        docker build --no-cache \
         -f docker/frontend.DockerFile \
         -t yashkhakhkhar455/blogify-frontend:latest \
         .
