@@ -1,0 +1,78 @@
+name: Build and Deploy Blogify
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # LOGIN DOCKER HUB
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+
+    # ==============================
+    # BUILD BACKEND IMAGE
+    # ==============================
+    - name: Build backend image
+      run: |
+        docker build \
+        -f docker/backend.DockerFile \
+        -t yashkhakhkhar455/blogify-backend:latest \
+        .
+
+    - name: Push backend image
+      run: docker push yashkhakhkhar455/blogify-backend:latest
+
+
+    # ==============================
+    # BUILD FRONTEND IMAGE
+    # ==============================
+    - name: Build frontend image
+      run: |
+        docker build \
+        -f docker/frontend.DockerFile \
+        -t yashkhakhkhar455/blogify-frontend:latest \
+        .
+
+    - name: Push frontend image
+      run: docker push yashkhakhkhar455/blogify-frontend:latest
+
+
+    # ==============================
+    # DEPLOY ON EC2
+    # ==============================
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+
+          echo "🚀 Deployment started"
+
+          # CHANGE THIS if your repo is elsewhere on EC2
+          APP_DIR="/home/ec2-user/projects/blogify"
+
+          cd $APP_DIR
+
+          echo "📥 Pulling latest images"
+          docker pull yashkhakhkhar455/blogify-backend:latest
+          docker pull yashkhakhkhar455/blogify-frontend:latest
+
+          echo "🛑 Stopping old containers"
+          docker compose -f docker/docker-compose.yml down
+
+          echo "▶️ Starting containers"
+          docker compose -f docker/docker-compose.yml up -d
+
+          echo "✅ Deployment finished"

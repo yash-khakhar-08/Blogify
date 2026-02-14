@@ -1,20 +1,16 @@
 services:
   backend:
-    build:
-      context: ..
-      dockerfile: docker/backend.DockerFile
-    image: blogify-backend
+    image: yashkhakhkhar455/blogify-backend:latest
     container_name: blogify-backend
     expose:
       - "8080"
+    restart: always
 
   nginx:
-    build:
-      context: ..
-      dockerfile: docker/frontend.DockerFile
-    image: blogify-frontend
+    image: yashkhakhkhar455/blogify-frontend:latest
     container_name: blogify-frontend
     ports:
       - "80:80"
     depends_on:
       - backend
+    restart: always
