@@ -15,6 +15,7 @@ connectDB().then(() => {
     initWebSocketServer(server)
 
     server.listen(PORT, () => {
+        console.log('is working?')
         console.log(`Server running on http://localhost:${PORT}`)
     })
     
