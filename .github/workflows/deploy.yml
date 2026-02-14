@@ -26,11 +26,11 @@ jobs:
       run: |
         docker build --no-cache \
         -f docker/backend.DockerFile \
-        -t yashkhakhkhar455/blogify-backend:v1 \
+        -t yashkhakhkhar455/blogify-backend:v2 \
         .
 
     - name: Push backend image
-      run: docker push yashkhakhkhar455/blogify-backend:v1
+      run: docker push yashkhakhkhar455/blogify-backend:v2
 
 
     # ==============================
@@ -40,11 +40,11 @@ jobs:
       run: |
         docker build --no-cache \
         -f docker/frontend.DockerFile \
-        -t yashkhakhkhar455/blogify-frontend:v1 \
+        -t yashkhakhkhar455/blogify-frontend:v2 \
         .
 
     - name: Push frontend image
-      run: docker push yashkhakhkhar455/blogify-frontend:v1
+      run: docker push yashkhakhkhar455/blogify-frontend:v2
 
 
     # ==============================
@@ -66,8 +66,8 @@ jobs:
           cd $APP_DIR
 
           echo "📥 Pulling latest images"
-          docker pull yashkhakhkhar455/blogify-backend:v1
-          docker pull yashkhakhkhar455/blogify-frontend:v1
+          docker pull yashkhakhkhar455/blogify-backend:v2
+          docker pull yashkhakhkhar455/blogify-frontend:v2
 
           echo "🛑 Stopping old containers"
           docker compose down
