@@ -72,14 +72,18 @@ jobs:
           echo "🛑 Stopping old containers"
           docker compose down
 
-          echo "▶️ Starting containers"
+          echo "📝 Creating .env file from GitHub secrets"
+          
+          cat > ../backend/.env <<EOF
+          PORT=${{ secrets.PORT }}
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+          EOF
 
-          PORT=${{ secrets.PORT }} \
-          MONGO_URI=${{ secrets.MONGO_URI }} \
-          JWT_SECRET=${{ secrets.JWT_SECRET }} \
-          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} \
-          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
-          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
+          echo "▶️ Starting containers"
           docker compose up -d
 
           echo "✅ Deployment finished"
