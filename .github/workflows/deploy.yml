@@ -73,7 +73,7 @@ jobs:
           docker compose down
 
           echo "📝 Creating .env file from GitHub secrets"
-          
+
           cat > ../backend/.env <<EOF
           PORT=${{ secrets.PORT }}
           MONGO_URI=${{ secrets.MONGO_URI }}
@@ -85,5 +85,8 @@ jobs:
 
           echo "▶️ Starting containers"
           docker compose up -d
+
+          echo "Removing unused images"
+          docker image prune -af
 
           echo "✅ Deployment finished"
