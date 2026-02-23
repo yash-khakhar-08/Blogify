@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blogify-ingress
+  namespace: blogify-ns
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+
+          # FRONTEND
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: blogify-frontend-service
+                port:
+                  number: 80
+
+          # BACKEND API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: blogify-backend-service
+                port:
+                  number: 8080

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blogify-backend-deploy
+  namespace: blogify-ns
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: blogify-backend
+
+  template:
+    metadata:
+      labels:
+        app: blogify-backend
+
+    spec:
+      containers:
+        - name: backend
+          image: yashkhakhkhar455/blogify-backend:v1
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - secretRef:
+                name: blogify-backend-env
